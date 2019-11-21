@@ -183,10 +183,21 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support' && requested.name != 'multidex') {
+            details.useVersion "${rootProject.ext.supportLibVersion}"
+        }
+    }
+}
+
 dependencies {
         implementation fileTree(dir: "libs", include: ["*.jar"])
         implementation "com.facebook.react:react-native:+"  // From node_modules
         implementation project(':react-native-navigation')
+
+
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

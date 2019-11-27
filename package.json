@@ -3,12 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "cd android && gradlew app:assembleDebug && gradlew installDebug",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
-    "android": "cd android && gradlew app:assembleDebug && gradlew installDebug"
+    "lint": "eslint ."
   },
   "dependencies": {
     "react": "16.9.0",

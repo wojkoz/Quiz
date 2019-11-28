@@ -14,13 +14,19 @@ Navigation.registerComponent('ResultScreen', () => ResultScreen);
 Navigation.events().registerAppLaunchedListener(() => {
   Navigation.setRoot({
     root: {
-      component: {
-        name: 'Home',
-        topBar: {
-          title: {
-            text: 'Home',
+      stack: {
+        children: [
+          {
+            component: {
+              name: 'Home',
+            },
+            options: {
+              topBar: {
+                title: 'Home',
+              },
+            },
           },
-        },
+        ],
       },
     },
   });

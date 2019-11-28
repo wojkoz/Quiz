@@ -3,16 +3,27 @@ import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {goToTest, goToResult} from './navigation';
 import {Navigation} from 'react-native-navigation';
 
+import ResultScreen from './ResultScreen';
+import TestScreen from './TestScreen';
+
 export default class App extends React.Component {
-  static get options() {
-    return {
-      topBar: {
-        title: {
-          text: 'Home',
+  goToTest = i => {
+    Navigation.push(this.props.componentId, {
+      component: {
+        name: 'TestScreen',
+        passProps: {
+          text: 'Test #',
+        },
+        options: {
+          topBar: {
+            title:{
+              text: 'Test #'
+            }
+          },
         },
       },
-    };
-  }
+    }).then();
+  };
 
   render() {
     let tests = [];
@@ -22,7 +33,7 @@ export default class App extends React.Component {
         <TouchableOpacity
           key={i}
           onPress={() => {
-            goToTest({i});
+            this.goToTest({i});
           }}>
           <Text>Go to Test #{i}</Text>
         </TouchableOpacity>,

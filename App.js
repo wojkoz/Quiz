@@ -16,9 +16,9 @@ export default class App extends React.Component {
         },
         options: {
           topBar: {
-            title:{
-              text: 'Test #'
-            }
+            title: {
+              text: i,
+            },
           },
         },
       },
@@ -33,7 +33,7 @@ export default class App extends React.Component {
         <TouchableOpacity
           key={i}
           onPress={() => {
-            this.goToTest({i});
+            this.goToTest(`Test #${i}`);
           }}>
           <Text>Go to Test #{i}</Text>
         </TouchableOpacity>,

@@ -11,15 +11,7 @@ import {goToHome} from './navigation';
 import {Navigation} from 'react-native-navigation';
 
 export default class TestScreen extends React.Component {
-  static get options() {
-    return {
-      topBar: {
-        title: {
-          text: 'Test #',
-        },
-      },
-    };
-  }
+
   render() {
     return (
       <View>
@@ -27,14 +19,6 @@ export default class TestScreen extends React.Component {
           <Text> TestScreen Works</Text>
         </View>
 
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              goToHome();
-            }}>
-            <Text>Back to HOME</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     );
   }

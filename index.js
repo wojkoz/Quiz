@@ -20,14 +20,16 @@ Navigation.events().registerAppLaunchedListener(() => {
             component: {
               name: 'Home',
             },
-            options: {
-              topBar: {
-                title: 'Home',
-              },
-            },
           },
         ],
+        options: {
+          topBar: {
+            title: {
+              text: 'Home',
+            },
+          },
+        },
       },
     },
-  });
+  }).then();
 });

@@ -25,6 +25,24 @@ export default class App extends React.Component {
     }).then();
   };
 
+  goToResults = () => {
+    Navigation.push(this.props.componentId, {
+      component: {
+        name: 'ResultScreen',
+        passProps: {
+          text: '',
+        },
+        options: {
+          topBar: {
+            title: {
+              text: 'Results',
+            },
+          },
+        },
+      },
+    }).then();
+  };
+
   render() {
     let tests = [];
 
@@ -47,7 +65,7 @@ export default class App extends React.Component {
         <View>
           <TouchableOpacity
             onPress={() => {
-              goToResult();
+              this.goToResults();
             }}>
             <Text style={{textAlign: 'center', fontSize: 18}}>
               Go to Result

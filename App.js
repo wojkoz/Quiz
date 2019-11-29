@@ -1,23 +1,30 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {goToTest, goToResult} from './navigation';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 
-import ResultScreen from './ResultScreen';
-import TestScreen from './TestScreen';
+import ResultScreen from './screens/ResultScreen';
+import TestScreen from './screens/TestScreen';
+import TestComponent from './components/TestComponent';
 
 export default class App extends React.Component {
-  goToTest = i => {
+  goToTest = (title, index) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: 'TestScreen',
         passProps: {
-          text: 'Test #',
+          text: index,
         },
         options: {
           topBar: {
             title: {
-              text: i,
+              text: title,
+              alignment: 'center',
             },
           },
         },
@@ -36,6 +43,7 @@ export default class App extends React.Component {
           topBar: {
             title: {
               text: 'Results',
+              alignment: 'center',
             },
           },
         },
@@ -46,14 +54,17 @@ export default class App extends React.Component {
   render() {
     let tests = [];
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 1; i < 10; i++) {
       tests.push(
         <TouchableOpacity
+          style={styles.testStyle}
           key={i}
           onPress={() => {
-            this.goToTest(`Test #${i}`);
+            this.goToTest(`Test #${i}`, i.toString());
           }}>
-          <Text>Go to Test #{i}</Text>
+          <TestComponent
+            title={`Test title #${i}`}
+            tags={`#tag1 #tag2`}></TestComponent>
         </TouchableOpacity>,
       );
     }
@@ -67,8 +78,9 @@ export default class App extends React.Component {
             onPress={() => {
               this.goToResults();
             }}>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
-              Go to Result
+            <Text
+              style={{textAlign: 'center', fontSize: 24, fontFamily: 'arial'}}>
+              Result
             </Text>
           </TouchableOpacity>
         </View>
@@ -76,3 +88,8 @@ export default class App extends React.Component {
     );
   }
 }
+const styles = StyleSheet.create({
+  testStyle: {
+    margin: 15,
+  },
+});

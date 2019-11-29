@@ -11,15 +11,14 @@ import {Navigation} from 'react-native-navigation';
 import ResultScreen from './screens/ResultScreen';
 import TestScreen from './screens/TestScreen';
 import TestComponent from './components/TestComponent';
+import {tests} from './tests/Tests';
 
 export default class App extends React.Component {
-  goToTest = (title, index) => {
+  goToTest = title => {
     Navigation.push(this.props.componentId, {
       component: {
         name: 'TestScreen',
-        passProps: {
-          text: index,
-        },
+        passProps: {},
         options: {
           topBar: {
             title: {
@@ -52,18 +51,18 @@ export default class App extends React.Component {
   };
 
   render() {
-    let tests = [];
+    let testsArr = [];
 
-    for (let i = 1; i < 10; i++) {
-      tests.push(
+    for (let i = 0; i < tests.length; i++) {
+      testsArr.push(
         <TouchableOpacity
           style={styles.testStyle}
           key={i}
           onPress={() => {
-            this.goToTest(`Test #${i}`, i.toString());
+            this.goToTest(tests[i].title);
           }}>
           <TestComponent
-            title={`Test title #${i}`}
+            title={tests[i].title}
             tags={`#tag1 #tag2`}></TestComponent>
         </TouchableOpacity>,
       );
@@ -71,7 +70,7 @@ export default class App extends React.Component {
 
     return (
       <View style={{flex: 1}}>
-        <ScrollView>{tests}</ScrollView>
+        <ScrollView>{testsArr}</ScrollView>
 
         <View>
           <TouchableOpacity

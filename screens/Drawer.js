@@ -1,11 +1,20 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+} from 'react-native';
 import {Navigation} from 'react-native-navigation';
+import {tests} from '../tests/Tests';
 
 export default class Drawer extends Component {
   chooseName(text) {
     if (text === 'ResultScreen') return 'Results';
-    else return 'Home';
+    else if (text === 'Home') return 'Home';
+    else return text;
   }
 
   goToScreen = screenName => {
@@ -41,27 +50,38 @@ export default class Drawer extends Component {
           />
         </View>
         <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.goToScreen('Home')}>
-            <Text style={styles.buttonText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.goToScreen('ResultScreen')}>
-            <Text style={styles.buttonText}>Results</Text>
-          </TouchableOpacity>
-          <View
-            style={{borderBottomWidth: 5, width: '100%', marginTop: 10}}></View>
+          <ScrollView style={{width: '100%'}}>
+            <TouchableOpacity
+              style={styles.buttonStyle}
+              onPress={() => this.goToScreen('Home')}>
+              <Text style={styles.buttonText}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonStyle}
+              onPress={() => this.goToScreen('ResultScreen')}>
+              <Text style={styles.buttonText}>Results</Text>
+            </TouchableOpacity>
+            <View
+              style={{
+                borderBottomWidth: 5,
+                width: '100%',
+                marginTop: 10,
+              }}></View>
 
-          {/**
+            {/**
               testy map
                */}
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.goToScreen('TestScreen')}>
-            <Text style={styles.buttonText}>Testy</Text>
-          </TouchableOpacity>
+
+            {tests.map(test => {
+              return (
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  onPress={() => this.goToScreen('TestScreen')}>
+                  <Text style={styles.buttonText}>{test.title}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
       </View>
     );

@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
-import {tests} from '../tests/Tests';
+import {tests} from '../objects/Tests';
 
 export default class Drawer extends Component {
   chooseName(text) {

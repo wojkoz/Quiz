@@ -10,7 +10,7 @@ import {Navigation} from 'react-native-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import TestComponent from './components/TestComponent';
-import {tests} from './tests/Tests';
+import {tests} from './objects/Tests';
 
 export default class App extends React.Component {
   goToTest = (title, testObejct) => {

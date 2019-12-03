@@ -7,14 +7,13 @@ import {
   StyleSheet,
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
+import AsyncStorage from '@react-native-community/async-storage';
 
-import ResultScreen from './screens/ResultScreen';
-import TestScreen from './screens/TestScreen';
 import TestComponent from './components/TestComponent';
 import {tests} from './tests/Tests';
 
 export default class App extends React.Component {
-  goToTest = title => {
+  goToTest = (title, testObejct) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: 'TestScreen',
@@ -50,6 +49,56 @@ export default class App extends React.Component {
     }).then();
   };
 
+  goToRules = () => {
+    Navigation.push(this.props.componentId, {
+      component: {
+        name: 'Rules',
+        passProps: {
+          text: '',
+        },
+        options: {
+          topBar: {
+            title: {
+              text: 'Rules',
+              alignment: 'center',
+            },
+          },
+        },
+      },
+    }).then();
+  };
+
+  state = {show: true};
+
+  storeData = async () => {
+    try {
+      await AsyncStorage.setItem('@regulamin', 's');
+    } catch (e) {
+      // saving error
+    }
+  };
+
+  getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@regulamin');
+      if (value !== null) {
+        this.storeData();
+        this.setState({
+          show: false,
+        });
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  componentDidMount() {
+    if (this.state.show) {
+      this.goToRules();
+      this.storeData();
+    }
+  }
+
   render() {
     let testsArr = [];
 
@@ -59,7 +108,7 @@ export default class App extends React.Component {
           style={styles.testStyle}
           key={i}
           onPress={() => {
-            this.goToTest(tests[i].title);
+            this.goToTest(tests[i].title, tests[i]);
           }}>
           <TestComponent
             title={tests[i].title}

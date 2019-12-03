@@ -75,6 +75,7 @@ export default class Drawer extends Component {
             {tests.map(test => {
               return (
                 <TouchableOpacity
+                  key={test.id}
                   style={styles.buttonStyle}
                   onPress={() => this.goToScreen('TestScreen')}>
                   <Text style={styles.buttonText}>{test.title}</Text>

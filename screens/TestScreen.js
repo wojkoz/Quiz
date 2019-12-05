@@ -6,9 +6,7 @@ export default class TestScreen extends React.Component {
   render() {
     return (
       <View>
-        <View>
-          <Text> {}</Text>
-        </View>
+
       </View>
     );
   }

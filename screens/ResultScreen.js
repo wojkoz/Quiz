@@ -40,6 +40,13 @@ export default class ResultScreen extends React.Component {
   _refreshListView() {
     //Start Rendering Spinner
     this.setState({refreshing: true});
+    results.push({
+      nick: 'asds',
+      score: 18,
+      total: 20,
+      type: 'historia',
+      date: '2018-11-22',
+    })
 
     //Updating the dataSource with new data
     this.setState({data: results});

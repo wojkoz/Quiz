@@ -15,7 +15,6 @@ import {tests} from './objects/Tests';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {show: true};
 
     this.getData();
     this.storeData();
@@ -80,7 +79,7 @@ export default class App extends React.Component {
 
   storeData = async () => {
     try {
-      await AsyncStorage.setItem('@regulain_Key', 'true');
+      await AsyncStorage.setItem('@key1', 'true');
     } catch (e) {
       // saving error
     }
@@ -88,9 +87,8 @@ export default class App extends React.Component {
 
   getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('@regulain_Key');
+      const value = await AsyncStorage.getItem('@key1');
       if (value !== null) {
-        this.setState({show: 'false'});
       } else {
         this.goToRules();
       }

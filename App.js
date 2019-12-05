@@ -13,6 +13,15 @@ import TestComponent from './components/TestComponent';
 import {tests} from './objects/Tests';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {show: true};
+
+    this.getData();
+    this.storeData();
+  }
+
+
   goToTest = (title, testObejct) => {
     Navigation.push(this.props.componentId, {
       component: {
@@ -68,11 +77,10 @@ export default class App extends React.Component {
     }).then();
   };
 
-  state = {show: true};
 
   storeData = async () => {
     try {
-      await AsyncStorage.setItem('@regulamin', 's');
+      await AsyncStorage.setItem('@regulain_Key', 'true');
     } catch (e) {
       // saving error
     }
@@ -80,24 +88,17 @@ export default class App extends React.Component {
 
   getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('@regulamin');
+      const value = await AsyncStorage.getItem('@regulain_Key');
       if (value !== null) {
-        this.storeData();
-        this.setState({
-          show: false,
-        });
+        this.setState({show: 'false'});
+      } else {
+        this.goToRules();
       }
     } catch (e) {
       // error reading value
     }
   };
 
-  componentDidMount() {
-    if (this.state.show) {
-      this.goToRules();
-      this.storeData();
-    }
-  }
 
   render() {
     let testsArr = [];
@@ -110,9 +111,7 @@ export default class App extends React.Component {
           onPress={() => {
             this.goToTest(tests[i].title, tests[i]);
           }}>
-          <TestComponent
-            title={tests[i].title}
-            tags={`#tag1 #tag2`}></TestComponent>
+          <TestComponent title={tests[i].title} tags={'#tag1 #tag2'} />
         </TouchableOpacity>,
       );
     }

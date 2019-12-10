@@ -8,16 +8,17 @@ import {
   ScrollView,
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
-import {tests} from '../objects/Tests';
+import {tasks} from '../objects/Quiz';
 
 export default class Drawer extends Component {
-  chooseName(text) {
-    if (text === 'ResultScreen') return 'Results';
-    else if (text === 'Home') return 'Home';
-    else return text;
+  chooseName(text, title = '') {
+    if (title === '') {
+      if (text === 'ResultScreen') return 'Results';
+      else return 'Home';
+    } else return title;
   }
 
-  goToScreen = screenName => {
+  goToScreen = (screenName, title = '') => {
     Navigation.mergeOptions('drawerId', {
       sideMenu: {
         left: {
@@ -31,7 +32,7 @@ export default class Drawer extends Component {
         options: {
           topBar: {
             title: {
-              text: this.chooseName(screenName),
+              text: this.chooseName(screenName, title),
             },
           },
         },
@@ -72,16 +73,17 @@ export default class Drawer extends Component {
               testy map
                */}
 
-            {tests.map(test => {
+            {tasks.map((task, id) => {
+              id++;
               return (
                 <TouchableOpacity
-                  key={test.id}
+                  key={id}
                   style={styles.buttonStyle}
-                  onPress={() => this.goToScreen('TestScreen')}>
-                  <Text style={styles.buttonText}>{test.title}</Text>
+                  onPress={() => this.goToScreen('TestScreen', `Test #${id}`)}>
+                  <Text style={styles.buttonText}>{`Test #${id}`}</Text>
                 </TouchableOpacity>
               );
-            })}
+            }, 0)}
           </ScrollView>
         </View>
       </View>

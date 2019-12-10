@@ -10,22 +10,40 @@ import {Navigation} from 'react-native-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import TestComponent from './components/TestComponent';
-import {tests} from './objects/Tests';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      data: [],
+    };
+
     this.getData();
     this.storeData();
   }
 
+  getTestsFromAPIAsync() {
+    return fetch('http://www.tgryl.pl/quiz/tests')
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({data: responseJson});
+      })
+      .catch(error => {
+        alert(error);
+      });
+  }
 
-  goToTest = (title, testObejct) => {
+  goToTest = (title, test, currQuestion, amountofQuestions) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: 'TestScreen',
-        passProps: {},
+        passProps: {
+          ti: title,
+          test: test,
+          currQuestion: currQuestion,
+          amountofQuestions: amountofQuestions,
+        },
         options: {
           topBar: {
             title: {
@@ -76,7 +94,6 @@ export default class App extends React.Component {
     }).then();
   };
 
-
   storeData = async () => {
     try {
       await AsyncStorage.setItem('@key1', 'true');
@@ -97,19 +114,32 @@ export default class App extends React.Component {
     }
   };
 
+  componentDidMount() {
+    this.getTestsFromAPIAsync();
+  }
 
   render() {
     let testsArr = [];
+    const data = this.state.data;
 
-    for (let i = 0; i < tests.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       testsArr.push(
         <TouchableOpacity
           style={styles.testStyle}
           key={i}
           onPress={() => {
-            this.goToTest(tests[i].title, tests[i]);
+            this.goToTest(
+              `Test #${i + 1}`,
+              this.tasks[i],
+              `${i + 1}`,
+              data[i].numberOfTasks,
+            );
           }}>
-          <TestComponent title={tests[i].title} tags={'#tag1 #tag2'} />
+          <TestComponent
+            title={`Test #${i + 1}`}
+            tags={data[i].tags}
+            desc={data[i].description}
+          />
         </TouchableOpacity>,
       );
     }

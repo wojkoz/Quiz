@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import QuizTestComponent from '../components/QuizTestComponent';
 import {Navigation} from 'react-native-navigation';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export default class TestScreen extends React.Component {
   constructor(props) {
@@ -142,24 +143,24 @@ export default class TestScreen extends React.Component {
     }
     if (this.state.currId >= this.props.numberOfTasks) {
       this.goToResults();
-      this.setState({loading: true});
+    }
+    if (this.state.loading === true) {
+      return <View></View>;
     }
 
     return (
       <View>
         <View>
-          {this.state.loading === false ? (
-            <QuizTestComponent
-              currQuestion={this.state.currId}
-              amountofQuestions={this.props.numberOfTasks}
-              time={this.state.time}
-              progress={this.state.progress}
-              question={this.state.task.question}
-              answers={this.state.task.answers}
-              func={this.checkAnserw.bind(this)}
-              prog={this.setProgress.bind(this)}
-            />
-          ) : null}
+          <QuizTestComponent
+            currQuestion={this.state.currId}
+            amountofQuestions={this.props.numberOfTasks}
+            time={this.state.time}
+            progress={this.state.progress}
+            question={this.state.task.question}
+            answers={this.state.task.answers}
+            func={this.checkAnserw.bind(this)}
+            prog={this.setProgress.bind(this)}
+          />
         </View>
         <Text>Score : {this.state.result.score}</Text>
       </View>

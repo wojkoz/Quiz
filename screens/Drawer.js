@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     alignItems: 'center',
     width: '90%',
+    fontFamily: 'Roboto-Black',
   },
   buttonText: {
     fontSize: 20,

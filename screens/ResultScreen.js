@@ -6,14 +6,27 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import {results} from '../objects/ResultObject';
 import ResultListitem from '../components/ResultListItem';
 
 export default class ResultScreen extends React.Component {
   state = {
     refreshing: false,
-    data: results,
+    data: [],
   };
+
+  getResultsFromAPIAsync() {
+    return fetch('http://www.tgryl.pl/quiz/results')
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({data: responseJson});
+      })
+      .catch(error => {
+        alert(error);
+      });
+  }
+  componentDidMount() {
+    this.getResultsFromAPIAsync();
+  }
 
   render() {
     return (
@@ -21,7 +34,7 @@ export default class ResultScreen extends React.Component {
         <FlatList
           data={this.state.data}
           renderItem={({item}) => <ResultListitem item={item}></ResultListitem>}
-          keyExtractor={item => item.nick}
+          keyExtractor={item => item.nick + Math.random()}
           refreshControl={this._refreshControl()}
         />
       </View>
@@ -40,16 +53,9 @@ export default class ResultScreen extends React.Component {
   _refreshListView() {
     //Start Rendering Spinner
     this.setState({refreshing: true});
-    results.push({
-      nick: '' + Math.random(),
-      score: 18,
-      total: 20,
-      type: 'historia',
-      date: '2018-11-22',
-    });
 
-    //Updating the dataSource with new data
-    this.setState({data: results});
+    this.getResultsFromAPIAsync();
+
     this.setState({refreshing: false}); //Stop Rendering Spinner
   }
 }

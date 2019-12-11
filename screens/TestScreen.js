@@ -1,24 +1,57 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  ProgressBarAndroid,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
-import {results} from '../objects/ResultObject';
+import {View, Text, StyleSheet} from 'react-native';
+import QuizTestComponent from '../components/QuizTestComponent';
+import {Navigation} from 'react-native-navigation';
 
 export default class TestScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       progress: 0,
       time: 0,
+      data: {},
+      tasks: [],
+      task: {},
+      result: {
+        score: 0,
+        nick: 'Mariuszek',
+        total: '',
+        type: '',
+        date: '',
+      },
+      currId: 0,
     };
   }
+
+  getTestFromAPIAsync() {
+    return fetch(`http://www.tgryl.pl/quiz/test/${this.props.task_id}`)
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({
+          loading: false,
+          data: responseJson,
+          tasks: responseJson.tasks,
+          task: responseJson.tasks[0],
+          time: responseJson.tasks[0].duration,
+        });
+      })
+      .catch(error => {
+        alert(error);
+      });
+  }
+
   componentDidMount() {
+    this.getTestFromAPIAsync();
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  setProgress(duration) {
     this.setState(() => ({
-      time: this.props.test.duration,
+      time: duration,
+      progress: 0,
     })),
       (this.interval = setInterval(
         () =>
@@ -29,85 +62,108 @@ export default class TestScreen extends React.Component {
         1000,
       ));
   }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
 
   checkAnserw(id) {
-    const arr = this.props.test.answers;
+    const arr = this.state.task.answers;
 
-    for (let i = 0; i < arr.length; i++) {
-      if (id === arr[i].isCorrect) {
-        results.push({
-          nick: '' + Math.random(),
-          score: 18,
-          total: 20,
-          type: 'historia',
-          date: '2018-11-22',
-        });
-      }
+    if (arr[id].isCorrect) {
+      this.setState(prev => ({
+        result: {
+          score: prev.result.score + 2,
+        },
+        currId: prev.currId < this.props.numberOfTasks ? prev.currId + 1 : null,
+        task: this.state.tasks[this.state.currId],
+      }));
+    } else {
+      this.setState(prev => ({
+        currId: prev.currId < this.props.numberOfTasks ? prev.currId + 1 : null,
+        task: this.state.tasks[this.state.currId],
+      }));
     }
+    this.setProgress(this.state.task.duration);
+  }
+
+  sendResultAsync(result) {
+    fetch('http://tgryl.pl/quiz/results', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(result),
+    });
+  }
+
+  goToResults() {
+    var date = new Date().getDate(); //Current Date
+    var month = new Date().getMonth() + 1; //Current Month
+    var year = new Date().getFullYear(); //Current Year
+
+    const result = {
+      score: this.state.result.score,
+      nick: 'Mariuszek',
+      total: this.props.numberOfTasks,
+      type: this.state.data.tags[0],
+      date: date + '-' + month + '-' + year,
+    };
+
+    this.sendResultAsync(result);
+
+    Navigation.push('MAIN_STACK', {
+      component: {
+        name: 'ResultScreen',
+        passProps: {
+          text: '',
+        },
+        options: {
+          topBar: {
+            title: {
+              text: 'Results',
+              alignment: 'center',
+            },
+          },
+        },
+      },
+    }).then();
+  }
+
+  timeIsZero() {
+    clearInterval(this.interval);
+    this.setState(prev => ({
+      currId: prev.currId < this.props.numberOfTasks ? prev.currId + 1 : null,
+      task: this.state.tasks[this.state.currId + 1],
+    }));
+    this.setProgress(this.state.task.duration);
   }
 
   render() {
+    if (this.state.time <= 0) {
+      this.timeIsZero();
+    }
+    if (this.state.currId >= this.props.numberOfTasks) {
+      this.goToResults();
+      this.setState({loading: true});
+    }
+
     return (
       <View>
-        {this.state.time <= 0 ? clearInterval(this.interval) : null}
         <View>
-          <View style={{marginLeft: 10}}>
-            <Text>
-              Question {this.props.currQuestion} of
-              {' ' + this.props.amountofQuestions}
-            </Text>
-            <Text>{this.state.time}</Text>
-          </View>
-          <View style={styles.container}>
-            <ProgressBarAndroid
-              styleAttr="Horizontal"
-              indeterminate={false}
+          {this.state.loading === false ? (
+            <QuizTestComponent
+              currQuestion={this.state.currId}
+              amountofQuestions={this.props.numberOfTasks}
+              time={this.state.time}
               progress={this.state.progress}
-              animating={true}
+              question={this.state.task.question}
+              answers={this.state.task.answers}
+              func={this.checkAnserw.bind(this)}
+              prog={this.setProgress.bind(this)}
             />
-          </View>
+          ) : null}
         </View>
-        <View>
-          <Text style={{fontSize: 18, textAlign: 'center'}}>
-            {this.props.test.question}
-          </Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttons}>
-              <Text>{this.props.test.answers[0].content}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}>
-              <Text>{this.props.test.answers[1].content}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}>
-              <Text> {this.props.test.answers[2].content}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}>
-              <Text>{this.props.test.answers[3].content}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <Text>Score : {this.state.result.score}</Text>
       </View>
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-evenly',
-    padding: 10,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  buttons: {
-    flex: 1,
-    margin: 15,
-    backgroundColor: 'gray',
-    padding: 5,
-  },
-});
+const styles = StyleSheet.create({});

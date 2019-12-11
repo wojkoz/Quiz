@@ -11,6 +11,13 @@ import {Navigation} from 'react-native-navigation';
 import {tasks} from '../objects/Quiz';
 
 export default class Drawer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+    };
+  }
+
   chooseName(text, title = '') {
     if (title === '') {
       if (text === 'ResultScreen') return 'Results';
@@ -39,6 +46,42 @@ export default class Drawer extends Component {
       },
     });
   };
+
+  goToTest = (title, numberOfTasks, id) => {
+    Navigation.push('MAIN_STACK', {
+      component: {
+        name: 'TestScreen',
+        passProps: {
+          ti: title,
+          numberOfTasks: numberOfTasks,
+          id: id,
+        },
+        options: {
+          topBar: {
+            title: {
+              text: title,
+              alignment: 'center',
+            },
+          },
+        },
+      },
+    }).then();
+  };
+
+  getTestsFromAPIAsync() {
+    return fetch('http://www.tgryl.pl/quiz/tests')
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({data: responseJson});
+      })
+      .catch(error => {
+        alert(error);
+      });
+  }
+
+  componentDidMount() {
+    this.getTestsFromAPIAsync();
+  }
 
   render() {
     return (
@@ -79,7 +122,9 @@ export default class Drawer extends Component {
                 <TouchableOpacity
                   key={id}
                   style={styles.buttonStyle}
-                  onPress={() => this.goToScreen('TestScreen', `Test #${id}`)}>
+                  onPress={() =>
+                    this.goToTest(`Test #${id}`, task.numberOfTasks, task.id)
+                  }>
                   <Text style={styles.buttonText}>{`Test #${id}`}</Text>
                 </TouchableOpacity>
               );

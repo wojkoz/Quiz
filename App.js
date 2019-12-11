@@ -34,15 +34,14 @@ export default class App extends React.Component {
       });
   }
 
-  goToTest = (title, test, currQuestion, amountofQuestions) => {
+  goToTest = (title, numberOfTasks, id) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: 'TestScreen',
         passProps: {
           ti: title,
-          test: test,
-          currQuestion: currQuestion,
-          amountofQuestions: amountofQuestions,
+          numberOfTasks: numberOfTasks,
+          task_id: id,
         },
         options: {
           topBar: {
@@ -128,12 +127,7 @@ export default class App extends React.Component {
           style={styles.testStyle}
           key={i}
           onPress={() => {
-            this.goToTest(
-              `Test #${i + 1}`,
-              this.tasks[i],
-              `${i + 1}`,
-              data[i].numberOfTasks,
-            );
+            this.goToTest(`Test #${i + 1}`, data[i].numberOfTasks, data[i].id);
           }}>
           <TestComponent
             title={`Test #${i + 1}`}

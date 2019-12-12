@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {results} from '../objects/ResultObject';
-import ResultListitem from '../components/ResultListItem';
+import ResultListItem from '../components/ResultListItem';
 
 export default class ResultScreen extends React.Component {
   state = {
@@ -20,7 +20,7 @@ export default class ResultScreen extends React.Component {
       <View>
         <FlatList
           data={this.state.data}
-          renderItem={({item}) => <ResultListitem item={item}></ResultListitem>}
+          renderItem={({item}) => <ResultListItem item={item} />}
           keyExtractor={item => item.nick}
           refreshControl={this._refreshControl()}
         />
@@ -41,12 +41,12 @@ export default class ResultScreen extends React.Component {
     //Start Rendering Spinner
     this.setState({refreshing: true});
     results.push({
-      nick: 'asds',
+      nick: `${Math.random()}`,
       score: 18,
       total: 20,
       type: 'historia',
       date: '2018-11-22',
-    })
+    });
 
     //Updating the dataSource with new data
     this.setState({data: results});

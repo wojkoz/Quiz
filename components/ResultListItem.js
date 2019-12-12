@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-const ResultListitem = props => {
+const ResultListItem = props => {
   return (
     <View style={{margin: 10, marginBottom: 0, backgroundColor: 'gray'}}>
       <Text style={styles.text}>{props.item.nick}</Text>
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResultListitem;
+export default ResultListItem;

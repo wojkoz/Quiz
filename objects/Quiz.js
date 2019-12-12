@@ -22,6 +22,28 @@ const tasks = [
     ],
     duration: 30,
   },
+  {
+    question: 'Który domową z Sulla?',
+    answers: [
+      {
+        content: 'LUCJUSZ CYNNA',
+        isCorrect: false,
+      },
+      {
+        content: 'Juliusz CEZAR',
+        isCorrect: true,
+      },
+      {
+        content: 'LUCJUSZ MURENA',
+        isCorrect: false,
+      },
+      {
+        content: 'MAREk KRASSUS',
+        isCorrect: false,
+      },
+    ],
+    duration: 30,
+  },
 ];
 
 export {tasks};

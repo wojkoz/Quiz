@@ -8,16 +8,24 @@ import {
   ScrollView,
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
-import {tests} from '../objects/Tests';
+import {tasks} from '../objects/Quiz';
 
 export default class Drawer extends Component {
-  chooseName(text) {
-    if (text === 'ResultScreen') return 'Results';
-    else if (text === 'Home') return 'Home';
-    else return text;
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+    };
   }
 
-  goToScreen = screenName => {
+  chooseName(text, title = '') {
+    if (title === '') {
+      if (text === 'ResultScreen') return 'Results';
+      else return 'Home';
+    } else return title;
+  }
+
+  goToScreen = (screenName, title = '') => {
     Navigation.mergeOptions('drawerId', {
       sideMenu: {
         left: {
@@ -31,13 +39,49 @@ export default class Drawer extends Component {
         options: {
           topBar: {
             title: {
-              text: this.chooseName(screenName),
+              text: this.chooseName(screenName, title),
             },
           },
         },
       },
     });
   };
+
+  goToTest = (title, numberOfTasks, id) => {
+    Navigation.push('MAIN_STACK', {
+      component: {
+        name: 'TestScreen',
+        passProps: {
+          ti: title,
+          numberOfTasks: numberOfTasks,
+          id: id,
+        },
+        options: {
+          topBar: {
+            title: {
+              text: title,
+              alignment: 'center',
+            },
+          },
+        },
+      },
+    }).then();
+  };
+
+  getTestsFromAPIAsync() {
+    return fetch('http://www.tgryl.pl/quiz/tests')
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({data: responseJson});
+      })
+      .catch(error => {
+        alert(error);
+      });
+  }
+
+  componentDidMount() {
+    this.getTestsFromAPIAsync();
+  }
 
   render() {
     return (
@@ -72,16 +116,19 @@ export default class Drawer extends Component {
               testy map
                */}
 
-            {tests.map(test => {
+            {tasks.map((task, id) => {
+              id++;
               return (
                 <TouchableOpacity
-                  key={test.id}
+                  key={id}
                   style={styles.buttonStyle}
-                  onPress={() => this.goToScreen('TestScreen')}>
-                  <Text style={styles.buttonText}>{test.title}</Text>
+                  onPress={() =>
+                    this.goToTest(`Test #${id}`, task.numberOfTasks, task.id)
+                  }>
+                  <Text style={styles.buttonText}>{`Test #${id}`}</Text>
                 </TouchableOpacity>
               );
-            })}
+            }, 0)}
           </ScrollView>
         </View>
       </View>
@@ -111,6 +158,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     alignItems: 'center',
     width: '90%',
+    fontFamily: 'Roboto-Black',
   },
   buttonText: {
     fontSize: 20,

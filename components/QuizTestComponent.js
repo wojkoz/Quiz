@@ -13,9 +13,6 @@ export default class QuizTestComponent extends React.Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    this.props.prog(this.props.time);
-  }
 
   render() {
     let anw = this.props.answers;

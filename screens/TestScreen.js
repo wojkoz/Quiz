@@ -50,6 +50,7 @@ export default class TestScreen extends React.Component {
   }
 
   setProgress(duration) {
+    clearInterval(this.interval)
     this.setState(() => ({
       time: duration,
       progress: 0,
@@ -57,7 +58,7 @@ export default class TestScreen extends React.Component {
       (this.interval = setInterval(
         () =>
           this.setState(prev => ({
-            progress: prev.progress + 0.033,
+            progress: prev.progress + (1.0/this.state.task.duration),
             time: prev.time - 1,
           })),
         1000,
@@ -81,6 +82,7 @@ export default class TestScreen extends React.Component {
         task: this.state.tasks[this.state.currId],
       }));
     }
+
     this.setProgress(this.state.task.duration);
   }
 
@@ -96,9 +98,9 @@ export default class TestScreen extends React.Component {
   }
 
   goToResults() {
-    var date = new Date().getDate(); //Current Date
-    var month = new Date().getMonth() + 1; //Current Month
-    var year = new Date().getFullYear(); //Current Year
+    const date = new Date().getDate(); //Current Date
+    const month = new Date().getMonth() + 1; //Current Month
+    const year = new Date().getFullYear(); //Current Year
 
     const result = {
       score: this.state.result.score,
@@ -107,7 +109,6 @@ export default class TestScreen extends React.Component {
       type: this.state.data.tags[0],
       date: date + '-' + month + '-' + year,
     };
-
     this.sendResultAsync(result);
 
     Navigation.push('MAIN_STACK', {
@@ -145,7 +146,7 @@ export default class TestScreen extends React.Component {
       this.goToResults();
     }
     if (this.state.loading === true) {
-      return <View></View>;
+      return <View />;
     }
 
     return (
@@ -159,7 +160,6 @@ export default class TestScreen extends React.Component {
             question={this.state.task.question}
             answers={this.state.task.answers}
             func={this.checkAnserw.bind(this)}
-            prog={this.setProgress.bind(this)}
           />
         </View>
         <Text>Score : {this.state.result.score}</Text>

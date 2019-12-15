@@ -8,6 +8,7 @@ export default class TestScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isNext: false,
       loading: true,
       progress: 0,
       time: 0,
@@ -50,7 +51,7 @@ export default class TestScreen extends React.Component {
   }
 
   setProgress(duration) {
-    clearInterval(this.interval)
+    clearInterval(this.interval);
     this.setState(() => ({
       time: duration,
       progress: 0,
@@ -58,7 +59,7 @@ export default class TestScreen extends React.Component {
       (this.interval = setInterval(
         () =>
           this.setState(prev => ({
-            progress: prev.progress + (1.0/this.state.task.duration),
+            progress: prev.progress + 1.0 / this.state.task.duration,
             time: prev.time - 1,
           })),
         1000,
@@ -87,14 +88,14 @@ export default class TestScreen extends React.Component {
   }
 
   sendResultAsync(result) {
-    fetch('http://tgryl.pl/quiz/results', {
+    fetch('http://tgryl.pl/quiz/result', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(result),
-    });
+    }).then(null);
   }
 
   goToResults() {
@@ -103,13 +104,13 @@ export default class TestScreen extends React.Component {
     const year = new Date().getFullYear(); //Current Year
 
     const result = {
-      score: this.state.result.score,
       nick: 'Mariuszek',
+      score: this.state.result.score,
       total: this.props.numberOfTasks,
       type: this.state.data.tags[0],
       date: date + '-' + month + '-' + year,
     };
-    this.sendResultAsync(result);
+    //this.sendResultAsync(result);
 
     Navigation.push('MAIN_STACK', {
       component: {
@@ -138,33 +139,48 @@ export default class TestScreen extends React.Component {
     this.setProgress(this.state.task.duration);
   }
 
-  render() {
-    if (this.state.time <= 0) {
-      this.timeIsZero();
+  isMaxLenght() {
+    if (this.state.currId === this.props.numberOfTasks) {
     }
-    if (this.state.currId >= this.props.numberOfTasks) {
-      this.goToResults();
-    }
-    if (this.state.loading === true) {
-      return <View />;
-    }
+  }
 
-    return (
-      <View>
+  render() {
+    if (this.state.isNext) {
+      if (this.state.time <= 0) {
+        this.timeIsZero();
+      }
+      if (this.state.loading === true) {
+        return <View />;
+      }
+
+      return (
         <View>
-          <QuizTestComponent
-            currQuestion={this.state.currId}
-            amountofQuestions={this.props.numberOfTasks}
-            time={this.state.time}
-            progress={this.state.progress}
-            question={this.state.task.question}
-            answers={this.state.task.answers}
-            func={this.checkAnserw.bind(this)}
-          />
+          <View>
+            <QuizTestComponent
+              currQuestion={this.state.currId}
+              amountofQuestions={this.props.numberOfTasks}
+              time={this.state.time}
+              progress={this.state.progress}
+              question={this.state.task.question}
+              answers={this.state.task.answers}
+              func={this.checkAnserw.bind(this)}
+            />
+          </View>
+          <Text>Score : {this.state.result.score}</Text>
         </View>
-        <Text>Score : {this.state.result.score}</Text>
-      </View>
-    );
+      );
+    } else {
+      return (
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              this.goToResults();
+            }}>
+            <Text>Zakoncz test!</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
   }
 }
 const styles = StyleSheet.create({});

@@ -76,8 +76,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
-    enableHermes: false,  // clean and rebuild if changing
+        entryFile: "index.js",
+        enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -135,10 +135,10 @@ android {
         versionCode 1
         versionName "1.0"
     }
-        compileOptions {
-                sourceCompatibility JavaVersion.VERSION_1_8
-                targetCompatibility JavaVersion.VERSION_1_8
-           }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     splits {
         abi {
             reset()
@@ -193,10 +193,10 @@ configurations.all {
 }
 
 dependencies {
-    implementation project(':@react-native-community_async-storage')
-        implementation fileTree(dir: "libs", include: ["*.jar"])
-        implementation "com.facebook.react:react-native:+"  // From node_modules
-        implementation project(':react-native-navigation')
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(':react-native-navigation')
 
 
 

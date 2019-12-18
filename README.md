@@ -1,2 +1,2 @@
-# Quiz
-Quiz app react native
+# Quiz in React - Native Navigation
+Quiz

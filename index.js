@@ -1,24 +1,20 @@
 /**
  * @format
  */
-import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
-import {Navigation} from 'react-native-navigation';
+
 import App from './App';
-import ResultScreen from './screens/ResultScreen';
 import TestScreen from './screens/TestScreen';
+import ResultScreen from './screens/ResultScreen';
+import {Navigation} from 'react-native-navigation';
 import {Dimensions} from 'react-native';
 import Drawer from './screens/Drawer';
 import Rules from './screens/Rules';
 
-Navigation.registerComponent('Home', () => gestureHandlerRootHOC(App));
-Navigation.registerComponent('TestScreen', () =>
-  gestureHandlerRootHOC(TestScreen),
-);
-Navigation.registerComponent('ResultScreen', () =>
-  gestureHandlerRootHOC(ResultScreen),
-);
-Navigation.registerComponent('Drawer', () => gestureHandlerRootHOC(Drawer));
-Navigation.registerComponent('Rules', () => gestureHandlerRootHOC(Rules));
+Navigation.registerComponent('Home', () => App);
+Navigation.registerComponent('TestScreen', () => TestScreen);
+Navigation.registerComponent('ResultScreen', () => ResultScreen);
+Navigation.registerComponent('Drawer', () => Drawer);
+Navigation.registerComponent('Rules', () => Rules);
 
 const {width} = Dimensions.get('window');
 Navigation.events().registerAppLaunchedListener(() => {

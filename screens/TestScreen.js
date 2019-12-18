@@ -10,6 +10,8 @@ import {
 import QuizComponent from '../components/QuizTestComponent';
 import {Navigation} from 'react-native-navigation';
 
+import _ from 'lodash';
+
 export default class TestScreen extends React.Component {
   constructor(props) {
     super(props);

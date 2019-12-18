@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import TestComponent from './components/TestComponent';
 
+import _ from 'lodash';
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -27,7 +29,7 @@ export default class App extends React.Component {
     return fetch('http://www.tgryl.pl/quiz/tests')
       .then(response => response.json())
       .then(responseJson => {
-        this.setState({data: responseJson});
+        this.setState({data: _.shuffle(responseJson)});
       })
       .catch(error => {
         alert(error);

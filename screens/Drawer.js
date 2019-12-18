@@ -31,7 +31,14 @@ export default class Drawer extends Component {
   }
 
   goToTest = (title, numberOfTasks, id) => {
-    Navigation.push(this.props.componentId, {
+    Navigation.mergeOptions('drawerId', {
+      sideMenu: {
+        left: {
+          visible: false,
+        },
+      },
+    });
+    Navigation.push('MAIN_STACK', {
       component: {
         name: 'TestScreen',
         passProps: {
@@ -91,7 +98,6 @@ export default class Drawer extends Component {
 
   createButtons() {
     let buttons = [];
-    alert(this.state.data[0].id);
 
     for (let i = 0; i < this.state.data.length; i++) {
       buttons.push(
@@ -111,6 +117,15 @@ export default class Drawer extends Component {
     }
 
     return buttons;
+  }
+
+  randomTest() {
+    let test = Math.floor(Math.random() * this.state.data.length);
+    this.goToTest(
+      'random Test',
+      this.state.data[test].numberOfTasks,
+      this.state.data[test].id,
+    );
   }
 
   render() {
@@ -137,7 +152,7 @@ export default class Drawer extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.buttons}
-            onPress={() => this.goToScreen('Result')}>
+            onPress={() => this.goToScreen('ResultScreen')}>
             <Text style={styles.textStyle}>Results</Text>
           </TouchableOpacity>
           <View style={{flex: 3}}>
@@ -147,6 +162,13 @@ export default class Drawer extends Component {
                 justifyContent: 'space-between',
               }}>
               {this.createButtons()}
+
+              <TouchableOpacity
+                key={Math.random()}
+                style={styles.scrollViewButtons}
+                onPress={() => this.randomTest()}>
+                <Text style={styles.textStyle}>Test Random</Text>
+              </TouchableOpacity>
             </ScrollView>
           </View>
         </View>

@@ -8,21 +8,70 @@ import {
   ScrollView,
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
-import {tasks} from '../objects/Quiz';
 
 export default class Drawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      loading: true,
     };
   }
 
   chooseName(text, title = '') {
     if (title === '') {
-      if (text === 'ResultScreen') return 'Results';
-      else return 'Home';
-    } else return title;
+      if (text === 'Result') {
+        return 'Results';
+      } else {
+        return 'Home';
+      }
+    } else {
+      return title;
+    }
+  }
+
+  goToTest = (title, numberOfTasks, id) => {
+    Navigation.mergeOptions('drawerId', {
+      sideMenu: {
+        left: {
+          visible: false,
+        },
+      },
+    });
+    Navigation.push('MAIN_STACK', {
+      component: {
+        name: 'TestScreen',
+        passProps: {
+          ti: title,
+          numberOfTasks: numberOfTasks,
+          task_id: id,
+        },
+        options: {
+          topBar: {
+            title: {
+              text: title,
+              alignment: 'center',
+            },
+          },
+        },
+      },
+    }).then();
+  };
+  componentDidMount() {
+    this.getTestsFromAPIAsync();
+    this.setState({
+      loading: false,
+    });
+  }
+  getTestsFromAPIAsync() {
+    return fetch('http://www.tgryl.pl/quiz/tests')
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({data: responseJson});
+      })
+      .catch(error => {
+        alert(error);
+      });
   }
 
   goToScreen = (screenName, title = '') => {
@@ -47,120 +96,135 @@ export default class Drawer extends Component {
     });
   };
 
-  goToTest = (title, numberOfTasks, id) => {
-    Navigation.push('MAIN_STACK', {
-      component: {
-        name: 'TestScreen',
-        passProps: {
-          ti: title,
-          numberOfTasks: numberOfTasks,
-          id: id,
-        },
-        options: {
-          topBar: {
-            title: {
-              text: title,
-              alignment: 'center',
-            },
-          },
-        },
-      },
-    }).then();
-  };
+  createButtons() {
+    let buttons = [];
 
-  getTestsFromAPIAsync() {
-    return fetch('http://www.tgryl.pl/quiz/tests')
-      .then(response => response.json())
-      .then(responseJson => {
-        this.setState({data: responseJson});
-      })
-      .catch(error => {
-        alert(error);
-      });
+    for (let i = 0; i < this.state.data.length; i++) {
+      buttons.push(
+        <TouchableOpacity
+          key={i}
+          style={styles.scrollViewButtons}
+          onPress={() =>
+            this.goToTest(
+              `Test #${i + 1}`,
+              this.state.data[i].numberOfTasks,
+              this.state.data[i].id,
+            )
+          }>
+          <Text style={styles.textStyle}>{`Test #${i + 1}`}</Text>
+        </TouchableOpacity>,
+      );
+    }
+
+    return buttons;
   }
 
-  componentDidMount() {
-    this.getTestsFromAPIAsync();
+  randomTest() {
+    let test = Math.floor(Math.random() * this.state.data.length);
+    this.goToTest(
+      'random Test',
+      this.state.data[test].numberOfTasks,
+      this.state.data[test].id,
+    );
   }
 
   render() {
-    return (
-      <View style={styles.viewStyle}>
+    if (this.state.loading === true) {
+      return (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      );
+    } else {
+      return (
         <View style={styles.container}>
-          <Text style={{fontSize: 30}}>Quiz </Text>
+          <View style={styles.titleView}>
+            <Text style={styles.titleText}>Quiz App</Text>
+          </View>
           <Image
-            style={{width: 250, height: 250}}
+            style={{width: 250, height: 250, alignSelf: 'center'}}
             source={require('../images/hamburger.png')}
           />
-        </View>
-        <View style={styles.container}>
-          <ScrollView style={{width: '100%'}}>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={() => this.goToScreen('Home')}>
-              <Text style={styles.buttonText}>Home</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={() => this.goToScreen('ResultScreen')}>
-              <Text style={styles.buttonText}>Results</Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                borderBottomWidth: 5,
-                width: '100%',
-                marginTop: 10,
-              }}></View>
+          <TouchableOpacity
+            style={styles.buttons}
+            onPress={() => this.goToScreen('Home')}>
+            <Text style={styles.textStyle}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttons}
+            onPress={() => this.goToScreen('ResultScreen')}>
+            <Text style={styles.textStyle}>Results</Text>
+          </TouchableOpacity>
+          <View style={{flex: 3}}>
+            <ScrollView
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: 'space-between',
+              }}>
+              {this.createButtons()}
 
-            {/**
-              testy map
-               */}
-
-            {tasks.map((task, id) => {
-              id++;
-              return (
-                <TouchableOpacity
-                  key={id}
-                  style={styles.buttonStyle}
-                  onPress={() =>
-                    this.goToTest(`Test #${id}`, task.numberOfTasks, task.id)
-                  }>
-                  <Text style={styles.buttonText}>{`Test #${id}`}</Text>
-                </TouchableOpacity>
-              );
-            }, 0)}
-          </ScrollView>
+              <TouchableOpacity
+                key={Math.random()}
+                style={styles.scrollViewButtons}
+                onPress={() => this.randomTest()}>
+                <Text style={styles.textStyle}>Test Random</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'gray',
+  },
+  scrollViewStyle: {
+    width: '100%',
+  },
+  scrollViewButtons: {
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 10,
+    borderStyle: 'solid',
+    borderWidth: 3,
+  },
+  buttons: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 10,
+    borderStyle: 'solid',
+    borderWidth: 3,
+    fontFamily: 'Roboto-Medium',
+    fontSize: 18,
+  },
+  imageStyle: {
+    flex: 3,
+    backgroundColor: 'black',
+    marginBottom: 10,
+  },
+  titleText: {
+    color: 'white',
+    fontSize: 24,
+  },
+  textStyle: {
+    color: '#eeeeee',
+  },
+  titleView: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  viewStyle: {
-    flex: 1,
-  },
-  buttonStyle: {
-    marginTop: 10,
-    paddingTop: 15,
-    paddingBottom: 15,
-    marginLeft: 15,
-    marginRight: 15,
     backgroundColor: 'gray',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: 'black',
-    alignItems: 'center',
-    width: '90%',
-    fontFamily: 'Roboto-Black',
-  },
-  buttonText: {
-    fontSize: 20,
   },
 });

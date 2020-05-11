@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'Quiz' do
-  # Pods for Quiz
+target 'template' do
+  # Pods for template
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -34,12 +34,7 @@ target 'Quiz' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
-
-
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-
-  target 'QuizTests' do
+  target 'templateTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -47,10 +42,10 @@ target 'Quiz' do
   use_native_modules!
 end
 
-target 'Quiz-tvOS' do
-  # Pods for Quiz-tvOS
+target 'template-tvOS' do
+  # Pods for template-tvOS
 
-  target 'Quiz-tvOSTests' do
+  target 'template-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

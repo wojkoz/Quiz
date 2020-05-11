@@ -1,8 +1,16 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import QuizTestComponent from '../components/QuizTestComponent';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+
+import QuizComponent from '../components/QuizTestComponent';
 import {Navigation} from 'react-native-navigation';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+
+import _ from 'lodash';
 
 export default class TestScreen extends React.Component {
   constructor(props) {
@@ -15,13 +23,12 @@ export default class TestScreen extends React.Component {
       data: {},
       tasks: [],
       task: {},
-      result: {
-        score: 0,
-        nick: 'Mariuszek',
-        total: '',
-        type: '',
-        date: '',
-      },
+
+      nick: 'Mariuszek',
+      total: '',
+      type: '',
+      score: 0,
+
       currId: 0,
     };
   }
@@ -46,6 +53,7 @@ export default class TestScreen extends React.Component {
   componentDidMount() {
     this.getTestFromAPIAsync();
   }
+
   componentWillUnmount() {
     clearInterval(this.interval);
   }
@@ -71,15 +79,16 @@ export default class TestScreen extends React.Component {
 
     if (arr[id].isCorrect) {
       this.setState(prev => ({
-        result: {
-          score: prev.result.score + 2,
-        },
-        currId: prev.currId < this.props.numberOfTasks ? prev.currId + 1 : null,
+        score: prev.score + 1,
+
+        currId:
+          prev.currId <= this.props.numberOfTasks ? prev.currId + 1 : null,
         task: this.state.tasks[this.state.currId],
       }));
     } else {
       this.setState(prev => ({
-        currId: prev.currId < this.props.numberOfTasks ? prev.currId + 1 : null,
+        currId:
+          prev.currId <= this.props.numberOfTasks ? prev.currId + 1 : null,
         task: this.state.tasks[this.state.currId],
       }));
     }
@@ -104,13 +113,15 @@ export default class TestScreen extends React.Component {
     const year = new Date().getFullYear(); //Current Year
 
     const result = {
-      nick: 'Mariuszek',
-      score: this.state.result.score,
+      nick: this.state.nick,
+      score: this.state.score,
       total: this.props.numberOfTasks,
       type: this.state.data.tags[0],
       date: date + '-' + month + '-' + year,
     };
-    //this.sendResultAsync(result);
+
+    //wysylanie
+    this.sendResultAsync(result);
 
     Navigation.push('MAIN_STACK', {
       component: {
@@ -130,6 +141,14 @@ export default class TestScreen extends React.Component {
     }).then();
   }
 
+  isMaxLenght() {
+    if (this.state.currId > this.props.numberOfTasks) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   timeIsZero() {
     clearInterval(this.interval);
     this.setState(prev => ({
@@ -139,48 +158,67 @@ export default class TestScreen extends React.Component {
     this.setProgress(this.state.task.duration);
   }
 
-  isMaxLenght() {
-    if (this.state.currId === this.props.numberOfTasks) {
-    }
+  onChangeText(text) {
+    this.setState({
+      nick: text,
+    });
   }
 
   render() {
-    if (this.state.isNext) {
+    if (this.isMaxLenght()) {
       if (this.state.time <= 0) {
         this.timeIsZero();
       }
       if (this.state.loading === true) {
         return <View />;
       }
-
       return (
-        <View>
-          <View>
-            <QuizTestComponent
-              currQuestion={this.state.currId}
-              amountofQuestions={this.props.numberOfTasks}
-              time={this.state.time}
-              progress={this.state.progress}
-              question={this.state.task.question}
-              answers={this.state.task.answers}
-              func={this.checkAnserw.bind(this)}
-            />
-          </View>
-          <Text>Score : {this.state.result.score}</Text>
-        </View>
+        <QuizComponent
+          currQuestion={this.state.currId}
+          amountofQuestions={this.props.numberOfTasks}
+          time={this.state.time}
+          progress={this.state.progress}
+          question={this.state.task.question}
+          answers={this.state.task.answers}
+          func={this.checkAnserw.bind(this)}
+          score={this.state.score}
+        />
       );
     } else {
+      clearInterval(this.interval);
       return (
-        <View>
+        <View style={styles.container}>
           <TouchableOpacity
             onPress={() => {
               this.goToResults();
             }}>
-            <Text>Zakoncz test!</Text>
+            <Text
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                marginTop: '50%',
+                fontSize: 30,
+              }}>
+              Zakoncz test!
+            </Text>
           </TouchableOpacity>
+          <TextInput
+            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+            onChangeText={text => {
+              this.onChangeText(text);
+            }}
+            value={this.state.nick}
+          />
         </View>
       );
     }
   }
 }
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#393e46',
+    justifyContent: 'space-between',
+  },
+});

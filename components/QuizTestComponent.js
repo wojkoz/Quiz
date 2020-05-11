@@ -13,7 +13,6 @@ export default class QuizTestComponent extends React.Component {
     this.state = {};
   }
 
-
   render() {
     let anw = this.props.answers;
 
